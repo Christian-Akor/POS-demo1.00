@@ -7,6 +7,9 @@ app.use(express.json());
 app.use(express.text());
 
 // Helper function to parse ISO8583 message
+// Note: This simplified parser allows both numeric and non-numeric field identifiers
+// for demo purposes (e.g., "Routed"). In production, strict ISO8583 parsers would
+// only allow numeric field identifiers (2-128).
 function parseISO8583(messageString) {
   const parts = messageString.split(';');
   const message = {
@@ -102,6 +105,8 @@ app.post('/route', async (req, res) => {
     
     // Append response fields
     message.fields['39'] = '00'; // Response code (00 = approved)
+    // Note: Using 'Routed' as a non-numeric field is intentional for this demo
+    // In production, this would typically use a private/reserved numeric field (e.g., field 62 or 63)
     message.fields['Routed'] = acquirer;
     
     // Serialize the response
